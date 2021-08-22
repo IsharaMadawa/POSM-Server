@@ -7,6 +7,7 @@ namespace POSM_Server.GraphQL
 {
 	public class Query
 	{
+		//Needs to work on mjtation
 		[UseDbContext(typeof(POSMContext))]
 		[UseProjection]
 		[UseFiltering]
