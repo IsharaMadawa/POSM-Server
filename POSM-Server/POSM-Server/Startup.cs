@@ -31,7 +31,7 @@ namespace POSM_Server
 		{
 
 			services.AddPooledDbContextFactory<POSMContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-			services.AddGraphQLServer().AddQueryType<Query>().AddType<InvoiceType>().AddProjections().AddSorting().AddFiltering();
+			services.AddGraphQLServer().AddQueryType<Query>().AddType<InvoiceType>().AddMutationType<Mutation>().AddProjections().AddSorting().AddFiltering();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
