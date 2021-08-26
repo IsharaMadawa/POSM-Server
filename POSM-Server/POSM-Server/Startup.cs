@@ -7,7 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using POSM_Server.GraphQL;
-using POSM_Server.GraphQL.Items;
+using POSM_Server.GraphQL.InvoiceQuery;
+using POSM_Server.GraphQL.ItemQuery;
 using POSM_Server.Models;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,15 @@ namespace POSM_Server
 		{
 
 			services.AddPooledDbContextFactory<POSMContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-			services.AddGraphQLServer().AddQueryType<Query>().AddType<InvoiceType>().AddMutationType<Mutation>().AddProjections().AddSorting().AddFiltering();
+			services
+				.AddGraphQLServer()
+				.AddQueryType<Query>()
+				.AddType<ItemType>()
+				.AddType<InvoiceType>()
+				.AddMutationType<Mutation>()
+				.AddProjections()
+				.AddSorting()
+				.AddFiltering();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

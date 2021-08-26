@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using HotChocolate;
 using HotChocolate.Data;
+using POSM_Server.GraphQL.InvoiceQuery;
+using POSM_Server.GraphQL.ItemQuery;
 using POSM_Server.Models;
 
 namespace POSM_Server.GraphQL
@@ -15,18 +15,37 @@ namespace POSM_Server.GraphQL
         public async Task<AddInvoicePayload> AddInvoiceAsync(AddInvoiceInput input, [ScopedService] POSMContext context)
         {
             List<InvoiceItem> itemList = new List<InvoiceItem>();
-            itemList.Add(new InvoiceItem { ItemId = input.item.Id});
-
-            var invoice = new Invoice
+            foreach (InvoiceItem item in input.invoice.InvoiceItems)
             {
-                InvoiceDateTime = DateTime.Now,
+                itemList.Add(new InvoiceItem { ItemId = item.ItemId, Quantity = item.Quantity, CustomerId = item.CustomerId });
+            }
+
+            var newInvoice = new Invoice
+            {
+                InvoiceDateTime = input.invoice.InvoiceDateTime,
                 InvoiceItems = itemList
             };
 
-            context.Invoices.Add(invoice);
+            context.Invoices.Add(newInvoice);
             await context.SaveChangesAsync();
 
-            return new AddInvoicePayload(invoice);
+            return new AddInvoicePayload(newInvoice);
+        }
+
+        [UseDbContext(typeof(POSMContext))]
+        public async Task<int> AddItemAsync(AddItemInput input, [ScopedService] POSMContext context)
+        {
+            var item = new Item
+            {
+                ItemCode = input.itemData.ItemCode,
+                ItemName = input.itemData.ItemName,
+                UnitPrice = input.itemData.UnitPrice
+            };
+
+            context.Items.Add(item);
+            await context.SaveChangesAsync();
+
+            return item.Id;
         }
     }
 }

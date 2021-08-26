@@ -3,7 +3,7 @@ using HotChocolate.Types;
 using POSM_Server.Models;
 using System.Linq;
 
-namespace POSM_Server.GraphQL.Items
+namespace POSM_Server.GraphQL.InvoiceQuery
 {
     public class InvoiceType : ObjectType<Invoice>
     {
@@ -12,9 +12,10 @@ namespace POSM_Server.GraphQL.Items
         {
             descriptor.Description("Used to group the do Invoice items per Invoice");
 
-            descriptor.Field(x => x.InvoiceId).Ignore();
+            // Ishara[26/08/2021] We can ignore data from here it will exclude from projection
+            //descriptor.Field(x => x.InvoiceItems).Ignore();
 
-            descriptor.Field(x => x.InvoiceId)
+            descriptor.Field(x => x.InvoiceItems)
                         .ResolveWith<Resolvers>(p => p.GetInvoiceItems(default!, default!))
                         .UseDbContext<POSMContext>()
                         .Description("This is the list of to do item available for particuler Invoice");
