@@ -38,9 +38,11 @@ namespace POSM_Server
 				.AddType<ItemType>()
 				.AddType<InvoiceType>()
 				.AddMutationType<Mutation>()
+				.AddSubscriptionType<Subscription>()
 				.AddProjections()
 				.AddSorting()
-				.AddFiltering();
+				.AddFiltering()
+				.AddInMemorySubscriptions();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,6 +53,7 @@ namespace POSM_Server
 				app.UseDeveloperExceptionPage();
 			}
 
+			app.UseWebSockets();
 			app.UseRouting();
 
 			app.UseEndpoints(endpoints =>

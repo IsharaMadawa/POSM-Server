@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using HotChocolate;
 using HotChocolate.Data;
+using HotChocolate.Subscriptions;
 using POSM_Server.GraphQL.InvoiceQuery;
 using POSM_Server.GraphQL.ItemQuery;
 using POSM_Server.Models;
@@ -12,7 +14,7 @@ namespace POSM_Server.GraphQL
 	{
         // this attribute will help us utilise the multi threaded api db context
         [UseDbContext(typeof(POSMContext))]
-        public async Task<AddInvoicePayload> AddInvoiceAsync(AddInvoiceInput input, [ScopedService] POSMContext context)
+        public async Task<AddInvoicePayload> AddInvoiceAsync(AddInvoiceInput input, [ScopedService] POSMContext context, [Service] ITopicEventSender eventSender, CancellationToken cancellationToken)
         {
             List<InvoiceItem> itemList = new List<InvoiceItem>();
             foreach (InvoiceItem item in input.invoice.InvoiceItems)
@@ -28,6 +30,9 @@ namespace POSM_Server.GraphQL
 
             context.Invoices.Add(newInvoice);
             await context.SaveChangesAsync();
+
+            // we emit our subscription
+            await eventSender.SendAsync(nameof(Subscription.OnItemAdded), newInvoice, cancellationToken);
 
             return new AddInvoicePayload(newInvoice);
         }
