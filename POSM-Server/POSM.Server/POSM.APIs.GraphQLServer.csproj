@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>POSM.APIs.GraphQLServer</RootNamespace>
+    <UserSecretsId>2a84fc31-ae90-4d3c-b280-065eca8fd2b9</UserSecretsId>
+    <AssemblyName>POSM.APIs.GraphQLServer</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\**" />
+    <Content Remove="Models\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GraphQL.Server.Ui.Voyager" Version="5.0.2" />
+    <PackageReference Include="HotChocolate.AspNetCore" Version="11.3.5" />
+    <PackageReference Include="HotChocolate.Data.EntityFramework" Version="11.3.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\POSM.Core.Business.Operations\POSM.Core.Business.Operations.csproj" />
+    <ProjectReference Include="..\POSM.Core.Data.Db\POSM.Core.Data.Db.csproj" />
+    <ProjectReference Include="..\POSM.Fx.Utilities\POSM.Fx.Utilities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="GraphQL\Subscriptions\" />
+  </ItemGroup>
+
+</Project>

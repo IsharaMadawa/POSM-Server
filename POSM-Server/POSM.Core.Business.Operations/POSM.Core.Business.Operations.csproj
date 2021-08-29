@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\POSM.Core.Bussines.Model\POSM.Core.Bussines.Model.csproj" />
+    <ProjectReference Include="..\POSM.Core.Data.Db\POSM.Core.Data.Db.csproj" />
+  </ItemGroup>
+
+</Project>
