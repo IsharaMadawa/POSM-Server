@@ -20,6 +20,7 @@ namespace POSM.APIs.GraphQLServer
 			GraphQLConfig.ConfigServices(services);
 			ConfigurationConfig.ConfigServices(services);
 			EnvironmentConfig.ConfigServices(services);
+			CryptographyConfig.ConfigServices(services, Configuration);
 			SecurityConfig.ConfigServices(services, Configuration);
 			BusinessConfig.ConfigServices(services);
 			SystemConfig.ConfigServices(services);

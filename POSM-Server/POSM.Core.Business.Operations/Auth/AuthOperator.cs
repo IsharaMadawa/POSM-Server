@@ -1,16 +1,17 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using Microsoft.Extensions.Options;
 using POSM.Core.Business.Operations.Interfaces;
 using POSM.Core.Bussines.Model.User;
-using POSM.Core.Data.Db;
 using POSM.Core.Data.Db.Models;
+using POSM.Fx.Cryptography.Interfaces;
+using POSM.FX.Security.Interfaces;
+using POSM.FX.Security.OpenIDConnect;
 
 namespace POSM.Core.Business.Operations.Auth
 {
 	public class AuthOperator : OperatorBase, IAuthOperator
 	{
-		public AuthOperator(POSMDbContext context) : base(context)
+		public AuthOperator(POSMDbContext context, IPOSMHasher posmHasher, IOptions<TokenSettings> tokenSettings, ITokenValidator tokenValidator) : base(context, posmHasher, tokenSettings, tokenValidator)
 		{
 		}
 
@@ -27,7 +28,7 @@ namespace POSM.Core.Business.Operations.Auth
 				EmailAddress = registerInput.EmailAddress,
 				FirstName = registerInput.FirstName,
 				LastName = registerInput.LastName,
-				Password = PasswordHash(registerInput.ConfirmPassword)
+				Password = posmHasher.PasswordHash(registerInput.ConfirmPassword)
 			};
 
 			context.Users.Add(newUser);
@@ -88,31 +89,6 @@ namespace POSM.Core.Business.Operations.Auth
 			}
 
 			return string.Empty;
-		}
-
-		private string PasswordHash(string password)
-		{
-			byte[] salt;
-			salt = GenerateSaltNewInstance(16);
-
-			var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 1000);
-			byte[] hash = pbkdf2.GetBytes(20);
-
-			byte[] hashBytes = new byte[36];
-			Array.Copy(salt, 0, hashBytes, 0, 16);
-			Array.Copy(hash, 0, hashBytes, 16, 20);
-
-			return Convert.ToBase64String(hashBytes);
-		}
-
-		private static byte[] GenerateSaltNewInstance(int size)
-		{
-			using (var generator = RandomNumberGenerator.Create())
-			{
-				var salt = new byte[size];
-				generator.GetBytes(salt);
-				return salt;
-			}
 		}
 	}
 }

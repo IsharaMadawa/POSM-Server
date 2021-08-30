@@ -1,7 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
 using POSM.Core.Data.Db.Models;
 
 namespace POSM.APIs.GraphQLServer.StartupConfig.ServiceConfig

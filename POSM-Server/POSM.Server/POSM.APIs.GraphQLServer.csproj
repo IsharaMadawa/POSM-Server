@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\POSM.Core.Business.Operations\POSM.Core.Business.Operations.csproj" />
     <ProjectReference Include="..\POSM.Core.Data.Db\POSM.Core.Data.Db.csproj" />
+    <ProjectReference Include="..\POSM.Fx.Cryptography\POSM.Fx.Cryptography.csproj" />
     <ProjectReference Include="..\POSM.FX.Diagnostics\POSM.FX.Diagnostics.csproj" />
     <ProjectReference Include="..\POSM.FX.Security\POSM.FX.Security.csproj" />
     <ProjectReference Include="..\POSM.Fx.Utilities\POSM.Fx.Utilities.csproj" />
