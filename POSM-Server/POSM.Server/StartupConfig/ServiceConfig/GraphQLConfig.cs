@@ -4,14 +4,16 @@ using POSM.APIs.GraphQLServer.GraphQL.Mutations.Items;
 using POSM.APIs.GraphQLServer.GraphQL.Mutations.Users;
 using POSM.APIs.GraphQLServer.GraphQL.Queries.Items;
 using POSM.APIs.GraphQLServer.GraphQL.Queries.Users;
+using POSM.Fx.Utilities.GraphQL;
+using POSM.FX.Diagnostics.ExceptionHandling;
 
 namespace POSM.APIs.GraphQLServer.StartupConfig.ServiceConfig
 {
-	public class GraphQLConfig
+	public static class GraphQLConfig
 	{
         public static void ConfigServices(IServiceCollection services)
         {
-            services.AddInMemorySubscriptions();
+            services.AddErrorFilter<GraphQLErrorFilter>();
 
             IRequestExecutorBuilder externalGraphServerBuilder = services.AddGraphQLServer();
             ConfigAPIGraphQLServer(externalGraphServerBuilder);
@@ -21,7 +23,8 @@ namespace POSM.APIs.GraphQLServer.StartupConfig.ServiceConfig
         {
             graphServerBuilder.AddProjections()
                               .AddFiltering()
-                              .AddSorting();
+                              .AddSorting()
+                              .AddHttpRequestInterceptor<GraphQLRequestInterceptor>();
 
             #region Query registration
             graphServerBuilder.AddQueryType(d => d.Name("Query"))

@@ -1,13 +1,5 @@
-using GraphQL.Server.Ui.Voyager;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using POSM.APIs.GraphQLServer.StartupConfig.AppConfig;
 using POSM.APIs.GraphQLServer.StartupConfig.ServiceConfig;
-using POSM.Core.Data.Db.Models;
 
 namespace POSM.APIs.GraphQLServer
 {
@@ -20,37 +12,25 @@ namespace POSM.APIs.GraphQLServer
 			Configuration = configuration;
 		}
 
+		// IsharaK[29/08/2021] : This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddDbContext<POSMDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
+			LoggingServiceConfig.ConfigServices(services);
+			DataConfig.ConfigServices(services, Configuration);
 			GraphQLConfig.ConfigServices(services);
+			ConfigurationConfig.ConfigServices(services);
+			EnvironmentConfig.ConfigServices(services);
+			SecurityConfig.ConfigServices(services, Configuration);
 			BusinessConfig.ConfigServices(services);
+			SystemConfig.ConfigServices(services);
 		}
 
 		// IsharaK[29/08/2021] : This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
-			if (env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-			}
-
-			app.UseRouting();
-
-			app.UseEndpoints(endpoints =>
-			{
-				endpoints.MapGet("/", async context =>
-				{
-					await context.Response.WriteAsync("POSM Server working!");
-				});
-				endpoints.MapGraphQL();
-			});
-
-			app.UseGraphQLVoyager(new VoyagerOptions()
-			{
-				GraphQLEndPoint = "/graphql"
-			}, "/graphql-voyager");
+			ExceptionConfig.ConfigApp(app, env);
+			RoutingConfig.ConfigApp(app);
+			EndpointConfig.ConfigApp(app);
 		}
 	}
 }

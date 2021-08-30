@@ -6,7 +6,7 @@ using POSM.Core.Bussines.Model.User;
 namespace POSM.APIs.GraphQLServer.GraphQL.Mutations.Users
 {
 	[ExtendObjectType("Mutation")]
-	public class UserMutation
+	public class UserMutation : MutationBase
 	{
 		public string Register([Service] IAuthOperator authOperator, UserModel registerInput)
 		{

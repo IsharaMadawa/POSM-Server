@@ -3,7 +3,7 @@
 namespace POSM.APIs.GraphQLServer.GraphQL.Queries.Users
 {
 	[ExtendObjectType("Query")]
-	public class UserQuery
+	public class UserQuery : QueryBase
 	{
 		public string Welcome()
 		{

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using HotChocolate;
+﻿using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Types;
 using POSM.Core.Business.Operations.Interfaces;
@@ -8,7 +7,7 @@ using POSM.Core.Data.Db.Models;
 namespace POSM.APIs.GraphQLServer.GraphQL.Queries.Items
 {
 	[ExtendObjectType("Query")]
-	public class ItemQuery
+	public class ItemQuery : QueryBase
 	{
 		[UseProjection]
 		[UseFiltering]
