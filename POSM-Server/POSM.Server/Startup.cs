@@ -31,6 +31,8 @@ namespace POSM.APIs.GraphQLServer
 		{
 			ExceptionConfig.ConfigApp(app, env);
 			RoutingConfig.ConfigApp(app);
+			AuthenticationConfig.ConfigApp(app);
+			AuthorizationConfig.ConfigApp(app);
 			EndpointConfig.ConfigApp(app);
 		}
 	}

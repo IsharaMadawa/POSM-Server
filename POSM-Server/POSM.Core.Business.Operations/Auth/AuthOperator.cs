@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Microsoft.Extensions.Options;
 using POSM.Core.Business.Operations.Interfaces;
+using POSM.Core.Bussines.Model.Login;
 using POSM.Core.Bussines.Model.User;
 using POSM.Core.Data.Db.Models;
 using POSM.Fx.Cryptography.Interfaces;
@@ -13,6 +14,30 @@ namespace POSM.Core.Business.Operations.Auth
 	{
 		public AuthOperator(POSMDbContext context, IPOSMHasher posmHasher, IOptions<TokenSettings> tokenSettings, ITokenValidator tokenValidator) : base(context, posmHasher, tokenSettings, tokenValidator)
 		{
+		}
+
+		public string Login(LoginModel loginInput)
+		{
+			if (string.IsNullOrEmpty(loginInput.Email)
+			|| string.IsNullOrEmpty(loginInput.Passowrd))
+			{
+				return "Invalid Credentials";
+			}
+
+			var user = context.Users.Where(_ => _.EmailAddress == loginInput.Email).FirstOrDefault();
+			if (user == null)
+			{
+				return "Invalid Credentials";
+			}
+
+			if (!posmHasher.ValidatePasswordHash(loginInput.Passowrd, user.Password))
+			{
+				return "Invalid Credentials";
+			}
+
+			var roles = context.UserRoles.Where(_ => _.UserId == user.UserId).ToList();
+
+			return tokenValidator.GetJWTAuthKey(user, roles);
 		}
 
 		public string Register(UserModel registerInput)
