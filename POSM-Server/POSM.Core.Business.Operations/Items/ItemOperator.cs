@@ -13,7 +13,7 @@ namespace POSM.Core.Business.Operations.Items
 
 		public IQueryable<Item> GetItems()
 		{
-			return context.Items;
+			return dbContext.Items;
 		}
 
 		public int AddItem(ItemModel item)
@@ -25,8 +25,8 @@ namespace POSM.Core.Business.Operations.Items
 				UnitPrice = item.UnitPrice
 			};
 
-			context.Items.Add(newitem);
-			context.SaveChanges();
+			dbContext.Items.Add(newitem);
+			dbContext.SaveChanges();
 
 			return newitem.Id;
 		}

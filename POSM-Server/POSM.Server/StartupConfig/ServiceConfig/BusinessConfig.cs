@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using POSM.Core.Business.Operations.Auth;
+﻿using POSM.Core.Business.Operations.Auth;
 using POSM.Core.Business.Operations.Interfaces;
 using POSM.Core.Business.Operations.Items;
 

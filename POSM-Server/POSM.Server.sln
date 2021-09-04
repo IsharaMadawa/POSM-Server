@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31229.75
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GraphQLServer", "GraphQLServer", "{7F7FF243-2000-47E2-857B-7B7D89407B13}"
 EndProject
@@ -23,9 +23,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POSM.Fx.Utilities", "POSM.F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POSM.APIs.GraphQLServer", "POSM.Server\POSM.APIs.GraphQLServer.csproj", "{69D9FD1A-92A0-44C7-B053-375926D554AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POSM.FX.Security", "POSM.FX.Security\POSM.FX.Security.csproj", "{217373AC-5F05-4DBF-9EC2-28FC913DAA4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POSM.FX.Security", "POSM.FX.Security\POSM.FX.Security.csproj", "{217373AC-5F05-4DBF-9EC2-28FC913DAA4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POSM.FX.Diagnostics", "POSM.FX.Diagnostics\POSM.FX.Diagnostics.csproj", "{4995B5F3-7929-41EC-8A05-69D7D3CC8FAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POSM.FX.Diagnostics", "POSM.FX.Diagnostics\POSM.FX.Diagnostics.csproj", "{4995B5F3-7929-41EC-8A05-69D7D3CC8FAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POSM.Fx.Cryptography", "POSM.Fx.Cryptography\POSM.Fx.Cryptography.csproj", "{F16F11B4-1C9A-41AC-A1DB-3C0557C66F52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +63,10 @@ Global
 		{4995B5F3-7929-41EC-8A05-69D7D3CC8FAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4995B5F3-7929-41EC-8A05-69D7D3CC8FAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4995B5F3-7929-41EC-8A05-69D7D3CC8FAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F16F11B4-1C9A-41AC-A1DB-3C0557C66F52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F16F11B4-1C9A-41AC-A1DB-3C0557C66F52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F16F11B4-1C9A-41AC-A1DB-3C0557C66F52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F16F11B4-1C9A-41AC-A1DB-3C0557C66F52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,6 +81,7 @@ Global
 		{69D9FD1A-92A0-44C7-B053-375926D554AB} = {7F7FF243-2000-47E2-857B-7B7D89407B13}
 		{217373AC-5F05-4DBF-9EC2-28FC913DAA4B} = {5312164E-4139-47EF-9456-AEB2710FB25C}
 		{4995B5F3-7929-41EC-8A05-69D7D3CC8FAA} = {5312164E-4139-47EF-9456-AEB2710FB25C}
+		{F16F11B4-1C9A-41AC-A1DB-3C0557C66F52} = {5312164E-4139-47EF-9456-AEB2710FB25C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C657B7A1-7F98-4AB1-B1EB-80D630DB1277}
