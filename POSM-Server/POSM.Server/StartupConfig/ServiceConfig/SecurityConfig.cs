@@ -17,8 +17,8 @@ namespace POSM.APIs.GraphQLServer.StartupConfig.ServiceConfig
 			services.AddAuthorization(options =>
 			{
 				// IsharaK[31/08/2021] : Policy-Based Roles Authorizatio - Currently using this approach. Below approches are added as example and use whenever needed
-				options.AddPolicy(PolicyConstants.POLICY_INTERNAL_ADMIN, policy => { policy.RequireRole(new string[] { "admin", "cashier" }); });
-				options.AddPolicy(PolicyConstants.POLICY_INTERNAL_CASHIER, policy => { policy.RequireRole(new string[] { "cashier" }); });
+				options.AddPolicy(PolicyConstants.POLICY_INTERNAL_ADMIN, policy => { policy.RequireRole(new string[] { "admin" }); });
+				options.AddPolicy(PolicyConstants.POLICY_INTERNAL_CASHIER, policy => { policy.RequireRole(new string[] { "admin", "cashier" }); });
 
 				// IsharaK[31/08/2021] : Policy-Based Claims Authorization - Aauthorize the user with his claims availability
 				//options.AddPolicy("claim-policy-1", policy => {
@@ -35,7 +35,7 @@ namespace POSM.APIs.GraphQLServer.StartupConfig.ServiceConfig
 			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 			.AddJwtBearer(options =>
 			{
-				var tokenSettings = configuration
+				TokenSettings tokenSettings = configuration
 				.GetSection("TokenSettings").Get<TokenSettings>();
 				options.TokenValidationParameters = new TokenValidationParameters
 				{

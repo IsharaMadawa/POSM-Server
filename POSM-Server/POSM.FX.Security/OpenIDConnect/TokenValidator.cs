@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -19,24 +20,24 @@ namespace POSM.FX.Security.OpenIDConnect
 
 		public string GetJWTAuthKey(User user, List<UserRole> roles)
 		{
-			var securtityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenSettings.Key));
+			SymmetricSecurityKey securtityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenSettings.Key));
 
-			var credentials = new SigningCredentials(securtityKey, SecurityAlgorithms.HmacSha256);
+			SigningCredentials credentials = new SigningCredentials(securtityKey, SecurityAlgorithms.HmacSha256);
 
-			var claims = new List<Claim>();
+			List<Claim> claims = new List<Claim>();
 
 			claims.Add(new Claim("Email", user.EmailAddress));
 			claims.Add(new Claim("LastName", user.LastName));
 
 			if ((roles?.Count ?? 0) > 0)
 			{
-				foreach (var role in roles)
+				foreach (UserRole role in roles)
 				{
 					claims.Add(new Claim(ClaimTypes.Role, role.Name));
 				}
 			}
 
-			var jwtSecurityToken = new JwtSecurityToken(
+			JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(
 				issuer: tokenSettings.Issuer,
 				audience: tokenSettings.Audience,
 				expires: DateTime.Now.AddMinutes(30),
@@ -45,6 +46,40 @@ namespace POSM.FX.Security.OpenIDConnect
 			);
 
 			return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+		}
+
+		public string GenerateRefreshToken()
+		{
+			byte[] randomNumber = new byte[32];
+			using (RandomNumberGenerator generator = RandomNumberGenerator.Create())
+			{
+				generator.GetBytes(randomNumber);
+				return Convert.ToBase64String(randomNumber);
+			}
+		}
+
+		public ClaimsPrincipal GetClaimsFromExpiredToken(string accessToken)
+		{
+			TokenValidationParameters tokenValidationParameter = new TokenValidationParameters
+			{
+				ValidIssuer = tokenSettings.Issuer,
+				ValidateIssuer = true,
+				ValidAudience = tokenSettings.Audience,
+				ValidateAudience = true,
+				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenSettings.Key)),
+				ValidateLifetime = false // IsharaK[04/09/2021] : Ignore expiration, because here our target to decrypt the expired token.
+			};
+
+			JwtSecurityTokenHandler jwtHandler = new JwtSecurityTokenHandler();
+			ClaimsPrincipal principal = jwtHandler.ValidateToken(accessToken, tokenValidationParameter, out SecurityToken securityToken);
+
+			JwtSecurityToken jwtScurityToken = securityToken as JwtSecurityToken;
+			if (jwtScurityToken == null)
+			{
+				return null;
+			}
+
+			return principal;
 		}
 	}
 }

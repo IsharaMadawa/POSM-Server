@@ -10,7 +10,7 @@ namespace POSM.Fx.Cryptography
 			byte[] salt;
 			salt = GenerateSaltNewInstance(16);
 
-			var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 1000);
+			Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(password, salt, 1000);
 			// IsharaK[20/08/2021] : GetByte(20) - 20 value should be same as iteration count in below "ValidatePasswordHash" function
 			byte[] hash = pbkdf2.GetBytes(20);
 
@@ -23,9 +23,9 @@ namespace POSM.Fx.Cryptography
 
 		public byte[] GenerateSaltNewInstance(int size)
 		{
-			using (var generator = RandomNumberGenerator.Create())
+			using (RandomNumberGenerator generator = RandomNumberGenerator.Create())
 			{
-				var salt = new byte[size];
+				byte[] salt = new byte[size];
 				generator.GetBytes(salt);
 				return salt;
 			}
@@ -38,7 +38,7 @@ namespace POSM.Fx.Cryptography
 			byte[] salt = new byte[16];
 			Array.Copy(hashBytes, 0, salt, 0, 16);
 
-			var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 1000);
+			Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(password, salt, 1000);
 			byte[] hash = pbkdf2.GetBytes(20);
 
 			// IsharaK[20/08/2021] : Iteration count - 20 value should be same as GetByte value in above "PasswordHash" function

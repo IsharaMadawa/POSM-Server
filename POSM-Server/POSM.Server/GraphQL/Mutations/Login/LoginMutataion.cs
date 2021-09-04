@@ -8,8 +8,13 @@ namespace POSM.APIs.GraphQLServer.GraphQL.Mutations.Login;
 [ExtendObjectType("Mutation")]
 public class LoginMutataion : MutationBase
 {
-	public string Login([Service] IAuthOperator authOperator, LoginModel loginInput)
+	public TokenResponseModel Login([Service] IAuthOperator authOperator, LoginModel loginInput)
 	{
 		return authOperator.Login(loginInput);
+	}
+
+	public TokenResponseModel RenewAccessToken([Service] IAuthOperator authOperator, RenewTokenInputType renewToken)
+	{
+		return authOperator.RenewAccessToken(renewToken);
 	}
 }

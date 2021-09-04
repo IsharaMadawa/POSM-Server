@@ -8,6 +8,8 @@ namespace POSM.Core.Business.Operations.Interfaces
 	{
 		string Register(UserModel registerInput);
 
-		string Login(LoginModel loginInput);
+		TokenResponseModel Login(LoginModel loginInput);
+
+		TokenResponseModel RenewAccessToken(RenewTokenInputType renewToken);
 	}
 }

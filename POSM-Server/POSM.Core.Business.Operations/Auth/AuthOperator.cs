@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Security.Claims;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Options;
 using POSM.Core.Business.Operations.Interfaces;
 using POSM.Core.Bussines.Model.Login;
@@ -12,32 +13,44 @@ namespace POSM.Core.Business.Operations.Auth
 {
 	public class AuthOperator : OperatorBase, IAuthOperator
 	{
-		public AuthOperator(POSMDbContext context, IPOSMHasher posmHasher, IOptions<TokenSettings> tokenSettings, ITokenValidator tokenValidator) : base(context, posmHasher, tokenSettings, tokenValidator)
+		public AuthOperator(POSMDbContext dbContext, IPOSMHasher posmHasher, IOptions<TokenSettings> tokenSettings, ITokenValidator tokenValidator) : base(dbContext, posmHasher, tokenSettings, tokenValidator)
 		{
 		}
 
-		public string Login(LoginModel loginInput)
+		public TokenResponseModel Login(LoginModel loginInput)
 		{
+			TokenResponseModel result = new TokenResponseModel { ResponseMessage = "Success" };
+
 			if (string.IsNullOrEmpty(loginInput.Email)
 			|| string.IsNullOrEmpty(loginInput.Passowrd))
 			{
-				return "Invalid Credentials";
+				result.ResponseMessage = "Invalid Credentials";
+				return result;
 			}
 
-			var user = context.Users.Where(_ => _.EmailAddress == loginInput.Email).FirstOrDefault();
+			User user = dbContext.Users.Where(_ => _.EmailAddress == loginInput.Email).FirstOrDefault();
 			if (user == null)
 			{
-				return "Invalid Credentials";
+				result.ResponseMessage = "Invalid Credentials";
+				return result;
 			}
 
 			if (!posmHasher.ValidatePasswordHash(loginInput.Passowrd, user.Password))
 			{
-				return "Invalid Credentials";
+				result.ResponseMessage = "Invalid Credentials";
+				return result;
 			}
 
-			var roles = context.UserRoles.Where(_ => _.UserId == user.UserId).ToList();
+			List<UserRole> roles = dbContext.UserRoles.Where(_ => _.UserId == user.UserId).ToList();
 
-			return tokenValidator.GetJWTAuthKey(user, roles);
+			result.AccessToken = tokenValidator.GetJWTAuthKey(user, roles);
+			result.RefreshToken = tokenValidator.GenerateRefreshToken();
+
+			user.RefreshToken = result.RefreshToken;
+			user.RefershTokenExpiration = DateTime.Now.AddDays(7);
+			dbContext.SaveChanges();
+
+			return result;
 		}
 
 		public string Register(UserModel registerInput)
@@ -48,7 +61,7 @@ namespace POSM.Core.Business.Operations.Auth
 				return errorMessage;
 			}
 
-			var newUser = new User
+			User newUser = new User
 			{
 				EmailAddress = registerInput.EmailAddress,
 				FirstName = registerInput.FirstName,
@@ -56,20 +69,60 @@ namespace POSM.Core.Business.Operations.Auth
 				Password = posmHasher.PasswordHash(registerInput.ConfirmPassword)
 			};
 
-			context.Users.Add(newUser);
-			context.SaveChanges();
+			dbContext.Users.Add(newUser);
+			dbContext.SaveChanges();
 
 			// IsharaK[/28/08/2021] : Default role on registration
-			var newUserRoles = new UserRole
+			UserRole newUserRoles = new UserRole
 			{
 				Name = "admin",
 				UserId = newUser.UserId
 			};
 
-			context.UserRoles.Add(newUserRoles);
-			context.SaveChanges();
+			dbContext.UserRoles.Add(newUserRoles);
+			dbContext.SaveChanges();
 
 			return "Registration success";
+		}
+
+		public TokenResponseModel RenewAccessToken(RenewTokenInputType renewToken)
+		{
+			TokenResponseModel result = new TokenResponseModel { ResponseMessage = "Success" };
+
+			ClaimsPrincipal principal = tokenValidator.GetClaimsFromExpiredToken(renewToken.AccessToken);
+
+			if (principal == null)
+			{
+				result.ResponseMessage = "Invalid Token";
+				return result;
+			}
+
+			string email = principal.Claims.Where(_ => _.Type == "Email").Select(_ => _.Value).FirstOrDefault();
+			if (string.IsNullOrEmpty(email))
+			{
+				result.ResponseMessage = "Invalid Token";
+				return result;
+			}
+
+			User user = dbContext.Users.Where(_ => _.EmailAddress == email && _.RefreshToken == renewToken.RefreshToken && _.RefershTokenExpiration > DateTime.Now).FirstOrDefault();
+			if (user == null)
+			{
+				result.ResponseMessage = "Invalid Token";
+				return result;
+			}
+
+			List<UserRole> userRoles = dbContext.UserRoles.Where(_ => _.UserId == user.UserId).ToList();
+
+			result.AccessToken = tokenValidator.GetJWTAuthKey(user, userRoles);
+			result.RefreshToken = tokenValidator.GenerateRefreshToken();
+
+			user.RefreshToken = result.RefreshToken;
+			user.RefershTokenExpiration = DateTime.Now.AddDays(7);
+
+			dbContext.SaveChanges();
+
+			return result;
+
 		}
 
 		private string ResigstrationValidations(UserModel registerInput)
